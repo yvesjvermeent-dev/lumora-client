@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "lumora",
+  "version": "${version}",
+  "name": "Lumora Client",
+  "description": "Visual-only client: menu, HUD, crosshair, themes, ambient effects. No gameplay advantages.",
+  "authors": ["You"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["net.lumora.Lumora"] },
+  "mixins": ["lumora.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
