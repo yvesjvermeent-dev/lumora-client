@@ -4,19 +4,21 @@ import net.lumora.core.Theme;
 import net.lumora.gfx.Art;
 import net.lumora.gfx.Gfx;
 import net.lumora.gfx.Icons;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /** One custom-drawn, rounded, animated widget used for cards, tabs, buttons and orbit nodes. */
-public class CardButton extends ButtonWidget {
+public class CardButton extends ClickableWidget {
     public enum Style { COMPACT, ART, PILL, GLASS, PRIMARY, NODE, GHOST }
 
-    public float anim = 1f;          // entrance 0..1
-    public float nodeScale = 1f;     // orbit depth scale
+    public float anim = 1f;
+    public float nodeScale = 1f;
     public String badge = "ON";
     public boolean showSwitch = true, iconOnly = false;
 
@@ -24,16 +26,33 @@ public class CardButton extends ButtonWidget {
     private final String title, icon, art;
     private final Supplier<String> desc;
     private final BooleanSupplier on;
+    private final Runnable action;
     private float hover, state;
 
     public CardButton(Style style, int x, int y, int w, int h, String title, Supplier<String> desc,
                       String icon, String art, BooleanSupplier on, Runnable action) {
-        super(x, y, w, h, Text.literal(title), b -> action.run(), DEFAULT_NARRATION_SUPPLIER);
-        this.style = style; this.title = title; this.desc = desc; this.icon = icon; this.art = art; this.on = on;
+        super(x, y, w, h, Text.of(title));
+        this.style = style;
+        this.title = title;
+        this.desc = desc;
+        this.icon = icon;
+        this.art = art;
+        this.on = on;
+        this.action = action;
     }
 
     @Override
-    public void renderWidget(DrawContext c, int mx, int my, float delta) {
+    public void onClick(Click click, boolean doubled) {
+        if (action != null) action.run();
+    }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        appendDefaultNarrations(builder);
+    }
+
+    @Override
+    protected void renderWidget(DrawContext c, int mx, int my, float delta) {
         if (style == Style.GHOST) return;
         float a = anim;
         if (a <= 0.01f) return;
